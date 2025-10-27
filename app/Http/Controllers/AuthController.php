@@ -8,17 +8,10 @@ use App\Models\User;
 
 class AuthController extends Controller
 {
-    /**
-     * Tampilkan form login
-     */
     public function showLogin()
     {
         return view('auth.login');
     }
-
-    /**
-     * Proses login user
-     */
     public function login(Request $request)
     {
         $request->validate([
@@ -26,20 +19,17 @@ class AuthController extends Controller
             'password' => 'required'
         ]);
 
-        // Pakai Auth::attempt jika password di-hash dengan bcrypt sesuai Laravel
         $credentials = $request->only('email', 'password');
 
         if (Auth::attempt($credentials)) {
             $user = Auth::user();
 
-            // Ambil role aman (null-safe)
             $roleName = strtolower($user->primary_role ?? '');
 
             if ($roleName === 'administrator' || $roleName === 'administrator' || $roleName === 'admin') {
                 return redirect()->route('admin.dashboard');
             }
 
-            // jika role tidak ditemukan atau bukan admin
             Auth::logout();
             return redirect()->route('login')->withErrors(['email' => 'Role pengguna tidak dikenali.']);
         }
@@ -47,9 +37,6 @@ class AuthController extends Controller
         return back()->withErrors(['email' => 'Email atau password salah.'])->withInput();
     }
 
-    /**
-     * Logout user
-     */
     public function logout()
     {
         Auth::logout();

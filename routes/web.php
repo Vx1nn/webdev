@@ -18,6 +18,11 @@ use App\Http\Controllers\Admin\{
     RoleController,
     UserController
 };
+use App\Http\Controllers\Admin\DashboardController as AdminDashboard;
+use App\Http\Controllers\Dokter\DashboardController as DokterDashboard;
+use App\Http\Controllers\Perawat\DashboardController as PerawatDashboard;
+use App\Http\Controllers\Resepsionis\DashboardController as ResepsionisDashboard;
+use App\Http\Controllers\Pemilik\DashboardController as PemilikDashboard;
 
 // Home page RSHP
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -32,10 +37,6 @@ Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
 Route::post('/login', [AuthController::class, 'login'])->name('login.process');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-// Admin Dashboard (sementara)
-Route::get('/admin/dashboard', function(){
-    return view('admin.dashboard');
-})->name('admin.dashboard')->middleware('auth');;
 
 // Halaman Data Master Admin
 Route::prefix('admin')->middleware('auth')->group(function() {
@@ -49,3 +50,28 @@ Route::prefix('admin')->middleware('auth')->group(function() {
     Route::get('/role', [RoleController::class, 'index'])->name('admin.role');
     Route::get('/user', [UserController::class, 'index'])->name('admin.user');
 });
+
+Auth::routes();
+
+// ========== ROUTE ROLE-BASED ==========
+Route::middleware(['auth', 'isAdmin'])->group(function () {
+    Route::get('/admin/dashboard', [App\Http\Controllers\Admin\DashboardController::class, 'index'])
+        ->name('admin.dashboard');
+});
+
+Route::middleware(['auth', 'isDokter'])->group(function() {
+    Route::get('/dokter/dashboard', [DokterDashboard::class, 'index'])->name('dokter.dashboard');
+});
+
+Route::middleware(['auth', 'isPerawat'])->group(function() {
+    Route::get('/perawat/dashboard', [PerawatDashboard::class, 'index'])->name('perawat.dashboard');
+});
+
+Route::middleware(['auth', 'isResepsionis'])->group(function() {
+    Route::get('/resepsionis/dashboard', [ResepsionisDashboard::class, 'index'])->name('resepsionis.dashboard');
+});
+
+Route::middleware(['auth', 'isPemilik'])->group(function() {
+    Route::get('/pemilik/dashboard', [PemilikDashboard::class, 'index'])->name('pemilik.dashboard');
+});
+

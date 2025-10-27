@@ -15,19 +15,16 @@ class User extends Authenticatable
     protected $fillable = ['nama', 'email', 'password'];
     protected $hidden = ['password'];
 
-    /**
-     * Relasi many-to-many via pivot role_user (meskipun saat ini user nampaknya hanya 1 role)
-     * pivot: role_user(idrole, iduser)
-     */
+
     public function roles()
     {
         return $this->belongsToMany(
             Role::class,
             'role_user',
-            'iduser', // foreign key on pivot that refers to this model (user)
-            'idrole', // foreign key on pivot that refers to Role model
-            'iduser', // local key on users table
-            'idrole'  // local key on roles table
+            'iduser',
+            'idrole',
+            'iduser',
+            'idrole'
         );
     }
 
@@ -35,12 +32,11 @@ class User extends Authenticatable
     {
         return $this->hasMany(Pet::class, 'iduser', 'iduser');
     }
-    /**
-     * Helper: ambil role utama (string) — null jika tidak ada
-     */
+
     public function getPrimaryRoleAttribute()
     {
         $role = $this->roles()->first();
-        return $role ? $role->nama_role : null;
+        return $role ? strtolower($role->nama_role) : null;
     }
+
 }
