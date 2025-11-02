@@ -53,10 +53,8 @@ Route::prefix('admin')->middleware('auth')->group(function() {
 
 Auth::routes();
 
-// ========== ROUTE ROLE-BASED ==========
 Route::middleware(['auth', 'isAdmin'])->group(function () {
-    Route::get('/admin/dashboard', [App\Http\Controllers\Admin\DashboardController::class, 'index'])
-        ->name('admin.dashboard');
+    Route::get('/admin/dashboard', [AdminDashboard::class, 'index'])->name('admin.dashboard');
 });
 
 Route::middleware(['auth', 'isDokter'])->group(function() {
