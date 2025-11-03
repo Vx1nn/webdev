@@ -20,24 +20,30 @@
 
 <div class="container">
   <div class="card shadow radius">
-    <div class="card-header">Daftar Kode Tindakan Terapi</div>
-      <div class="table-wrapper">
-        <table class="data-table">
-        <thead style="background: var(--blue); color:white;">
-          <tr><th>ID</th><th>Kode</th><th>Nama Terapi</th><th>Harga</th></tr>
+    <div class="card-header">
+      Daftar Kode Tindakan Terapi
+      <a href="{{ route('admin.kode-terapi.create') }}" class="btn-login" style="float:right;">+ Tambah Data</a>
+    </div>
+    <div class="card-body">
+      @if (session('success'))
+        <div class="alert success">{{ session('success') }}</div>
+      @endif
+
+      <table class="data-table">
+        <thead>
+          <tr><th>No</th><th>Kode</th><th>Nama Terapi</th><th>Harga</th></tr>
         </thead>
         <tbody>
-          @foreach($data as $d)
+          @foreach($data as $i => $row)
           <tr>
-            <td>{{ $d->idkode_terapi }}</td>
-            <td>{{ $d->kode }}</td>
-            <td>{{ $d->nama_terapi }}</td>
-            <td>Rp{{ number_format($d->harga,0,',','.') }}</td>
+            <td>{{ $i + 1 }}</td>
+            <td>{{ $row->kode }}</td>
+            <td>{{ $row->nama_terapi }}</td>
+            <td>Rp {{ number_format($row->harga, 0, ',', '.') }}</td>
           </tr>
           @endforeach
         </tbody>
       </table>
-      </div>
     </div>
   </div>
 </div>

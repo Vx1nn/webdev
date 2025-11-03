@@ -417,3 +417,70 @@ body {
   margin: 1rem 0 0.6rem;
   text-transform: uppercase;
 }
+
+select {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 1rem;
+}
+
+select:focus {
+  border-color: var(--blue);
+  outline: none;
+  box-shadow: 0 0 5px var(--blue);
+}
+
+.alert.error ul {
+  list-style-type: none;
+  padding-left: 0;
+}
+
+.btn-cancel {
+  background-color: #ccc;
+  color: #222;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  text-decoration: none;
+  margin-left: 10px;
+  transition: all 0.3s ease;
+}
+
+.btn-cancel:hover {
+  background-color: var(--yellow);
+  color: var(--dark-blue);
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 600;
+  color: var(--dark-blue);
+}
+
+input[type="number"] {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+.data-table td:last-child {
+  text-align: right;
+  font-weight: 600;
+}
+
+input::placeholder {
+  color: #999;
+  font-style: italic;
+}
+
+.alert.success {
+  background-color: #e7fbe7;
+  border-left: 5px solid var(--blue);
+  padding: 10px;
+  margin-bottom: 15px;
+  border-radius: 5px;
+}

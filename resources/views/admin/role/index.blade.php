@@ -20,20 +20,28 @@
 
 <div class="container">
   <div class="card shadow radius">
-    <div class="card-header">Daftar Role</div>
+    <div class="card-header">
+      Daftar Role Pengguna
+      <a href="{{ route('admin.role.create') }}" class="btn-login" style="float:right;">+ Tambah Role</a>
+    </div>
     <div class="card-body">
-      <div class="table-wrapper">
-        <table class="data-table">
-        <thead style="background: var(--blue); color:white;">
-          <tr><th>ID</th><th>Nama Role</th></tr>
+      @if (session('success'))
+        <div class="alert success">{{ session('success') }}</div>
+      @endif
+
+      <table class="data-table">
+        <thead>
+          <tr><th>No</th><th>Nama Role</th></tr>
         </thead>
         <tbody>
-          @foreach($data as $d)
-          <tr><td>{{ $d->idrole }}</td><td>{{ $d->nama_role }}</td></tr>
+          @foreach($data as $i => $row)
+          <tr>
+            <td>{{ $i + 1 }}</td>
+            <td>{{ ucfirst($row->nama_role) }}</td>
+          </tr>
           @endforeach
         </tbody>
       </table>
-      </div>
     </div>
   </div>
 </div>

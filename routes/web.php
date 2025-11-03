@@ -1,12 +1,12 @@
 <?php
 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\StrukturController;
 use App\Http\Controllers\VisiController;
 use App\Http\Controllers\LayananController;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\AdminDashboardController;
 use App\Http\Controllers\Admin\{
     DashboardController,
     JenisHewanController,
@@ -18,7 +18,6 @@ use App\Http\Controllers\Admin\{
     RoleController,
     UserController
 };
-use App\Http\Controllers\Admin\DashboardController as AdminDashboard;
 use App\Http\Controllers\Dokter\DashboardController as DokterDashboard;
 use App\Http\Controllers\Perawat\DashboardController as PerawatDashboard;
 use App\Http\Controllers\Resepsionis\DashboardController as ResepsionisDashboard;
@@ -53,9 +52,36 @@ Route::prefix('admin')->middleware('auth')->group(function() {
 
 Auth::routes();
 
-Route::middleware(['auth', 'isAdmin'])->group(function () {
-    Route::get('/admin/dashboard', [AdminDashboard::class, 'index'])->name('admin.dashboard');
-});
+Route::prefix('admin')
+    ->name('admin.')
+    ->middleware(['auth', 'isAdmin'])
+    ->group(function () {
+        
+        Route::get('/jenis-hewan', [JenisHewanController::class, 'index'])->name('jenis-hewan.index');
+        Route::get('/jenis-hewan/create', [JenisHewanController::class, 'create'])->name('jenis-hewan.create');
+        Route::post('/jenis-hewan/store', [JenisHewanController::class, 'store'])->name('jenis-hewan.store');
+
+        Route::get('/ras-hewan', [RasHewanController::class, 'index'])->name('ras-hewan.index');
+        Route::get('/ras-hewan/create', [RasHewanController::class, 'create'])->name('ras-hewan.create');
+        Route::post('/ras-hewan/store', [RasHewanController::class, 'store'])->name('ras-hewan.store');
+
+        Route::get('/kategori', [KategoriController::class, 'index'])->name('kategori.index');
+        Route::get('/kategori/create', [KategoriController::class, 'create'])->name('kategori.create');
+        Route::post('/kategori/store', [KategoriController::class, 'store'])->name('kategori.store');
+
+        Route::get('/kategori-klinis', [KategoriKlinisController::class, 'index'])->name('kategori-klinis.index');
+        Route::get('/kategori-klinis/create', [KategoriKlinisController::class, 'create'])->name('kategori-klinis.create');
+        Route::post('/kategori-klinis/store', [KategoriKlinisController::class, 'store'])->name('kategori-klinis.store');
+
+        Route::get('/kode-terapi', [KodeTerapiController::class, 'index'])->name('kode-terapi.index');
+        Route::get('/kode-terapi/create', [KodeTerapiController::class, 'create'])->name('kode-terapi.create');
+        Route::post('/kode-terapi/store', [KodeTerapiController::class, 'store'])->name('kode-terapi.store');
+
+        Route::get('/role', [RoleController::class, 'index'])->name('role.index');
+        Route::get('/role/create', [RoleController::class, 'create'])->name('role.create');
+        Route::post('/role/store', [RoleController::class, 'store'])->name('role.store');
+    });
+
 
 Route::middleware(['auth', 'isDokter'])->group(function() {
     Route::get('/dokter/dashboard', [DokterDashboard::class, 'index'])->name('dokter.dashboard');

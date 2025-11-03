@@ -20,20 +20,28 @@
 
 <div class="container">
   <div class="card shadow radius">
-    <div class="card-header">Daftar Jenis Hewan</div>
+    <div class="card-header">
+      Daftar Jenis Hewan
+      <a href="{{ route('admin.jenis-hewan.create') }}" class="btn-login" style="float: right;">+ Tambah Data</a>
+    </div>
     <div class="card-body">
-      <div class="table-wrapper">
-        <table class="data-table">
-        <thead style="background: var(--blue); color:white;">
-          <tr><th>ID</th><th>Nama Jenis Hewan</th></tr>
+      @if (session('success'))
+        <div class="alert success">{{ session('success') }}</div>
+      @endif
+
+      <table class="data-table">
+        <thead>
+          <tr><th>No</th><th>Nama Jenis</th></tr>
         </thead>
         <tbody>
-          @foreach($data as $d)
-          <tr><td>{{ $d->idjenis_hewan }}</td><td>{{ $d->nama_jenis_hewan }}</td></tr>
+          @foreach($data as $i => $row)
+            <tr>
+              <td>{{ $i+1 }}</td>
+              <td>{{ $row->nama_jenis }}</td>
+            </tr>
           @endforeach
         </tbody>
       </table>
-      </div>
     </div>
   </div>
 </div>

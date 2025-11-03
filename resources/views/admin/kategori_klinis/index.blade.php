@@ -20,19 +20,28 @@
 
 <div class="container">
   <div class="card shadow radius">
-    <div class="card-header">Daftar Kategori Klinis</div>
-      <div class="table-wrapper">
-        <table class="data-table">
-        <thead style="background: var(--blue); color:white;">
-          <tr><th>ID</th><th>Nama Kategori Klinis</th></tr>
+    <div class="card-header">
+      Daftar Kategori Klinis
+      <a href="{{ route('admin.kategori-klinis.create') }}" class="btn-login" style="float:right;">+ Tambah Data</a>
+    </div>
+    <div class="card-body">
+      @if (session('success'))
+        <div class="alert success">{{ session('success') }}</div>
+      @endif
+
+      <table class="data-table">
+        <thead>
+          <tr><th>No</th><th>Nama Kategori Klinis</th></tr>
         </thead>
         <tbody>
-          @foreach($data as $d)
-          <tr><td>{{ $d->idkategori_klinis }}</td><td>{{ $d->nama_kategori_klinis }}</td></tr>
+          @foreach($data as $i => $row)
+          <tr>
+            <td>{{ $i + 1 }}</td>
+            <td>{{ $row->nama_kategori_klinis }}</td>
+          </tr>
           @endforeach
         </tbody>
       </table>
-      </div>
     </div>
   </div>
 </div>
