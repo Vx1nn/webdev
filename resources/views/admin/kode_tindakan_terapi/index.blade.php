@@ -22,7 +22,7 @@
   <div class="card shadow radius">
     <div class="card-header">
       Daftar Kode Tindakan Terapi
-      <a href="{{ route('admin.kode-terapi.create') }}" class="btn-login" style="float:right;">+ Tambah Data</a>
+      <a href="{{ route('admin.kode-tindakan-terapi.create') }}" class="btn-login" style="float:right;">+ Tambah Data</a>
     </div>
     <div class="card-body">
       @if (session('success'))
@@ -31,7 +31,7 @@
 
       <table class="data-table">
         <thead>
-          <tr><th>No</th><th>Kode</th><th>Nama Terapi</th><th>Harga</th></tr>
+          <tr><th>No</th><th>Kode</th><th>Nama Tindakan Terapi</th><th>Harga</th></tr>
         </thead>
         <tbody>
           @foreach($data as $i => $row)
@@ -39,7 +39,7 @@
             <td>{{ $i + 1 }}</td>
             <td>{{ $row->kode }}</td>
             <td>{{ $row->nama_terapi }}</td>
-            <td>Rp {{ number_format($row->harga, 0, ',', '.') }}</td>
+            <td style="text-align:right;">Rp {{ number_format($row->harga, 0, ',', '.') }}</td>
           </tr>
           @endforeach
         </tbody>

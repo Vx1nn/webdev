@@ -20,7 +20,7 @@
 
 <div class="container">
   <div class="card shadow radius">
-    <div class="card-header">Tambah Kode Terapi Baru</div>
+    <div class="card-header">Tambah Kode Tindakan Terapi Baru</div>
     <div class="card-body">
       @if ($errors->any())
         <div class="alert error">
@@ -32,7 +32,7 @@
         </div>
       @endif
 
-      <form action="{{ route('admin.kode-terapi.store') }}" method="POST">
+      <form action="{{ route('admin.kode-tindakan-terapi.store') }}" method="POST">
         @csrf
         <div class="form-group">
           <label for="kode">Kode Tindakan</label>
@@ -41,20 +41,20 @@
         </div>
 
         <div class="form-group">
-          <label for="nama_terapi">Nama Terapi</label>
+          <label for="nama_terapi">Nama Tindakan Terapi</label>
           <input type="text" id="nama_terapi" name="nama_terapi"
                  placeholder="Contoh: Pemberian Vitamin C"
                  value="{{ old('nama_terapi') }}" required>
         </div>
 
         <div class="form-group">
-          <label for="harga">Harga</label>
+          <label for="harga">Harga (Rp)</label>
           <input type="number" id="harga" name="harga"
                  placeholder="Contoh: 50000" value="{{ old('harga') }}" required>
         </div>
 
         <button type="submit" class="btn-login">Simpan</button>
-        <a href="{{ route('admin.kode-terapi.index') }}" class="btn-cancel">Batal</a>
+        <a href="{{ route('admin.kode-tindakan-terapi.index') }}" class="btn-cancel">Batal</a>
       </form>
     </div>
   </div>
