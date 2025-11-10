@@ -10,27 +10,27 @@ class LoginController extends Controller
 {
     use \Illuminate\Foundation\Auth\AuthenticatesUsers;
 
-    // Fungsi ini akan otomatis dipanggil setelah login sukses
-    protected function authenticated(Request $request, $user)
-    {
-        $role = strtolower($user->primary_role ?? '');
+protected function authenticated(Request $request, $user)
+{
+    $role = strtolower($user->primary_role ?? '');
 
-        switch ($role) {
-            case 'administrator':
-                return redirect()->route('admin.dashboard');
-            case 'dokter':
-                return redirect()->route('dokter.dashboard');
-            case 'perawat':
-                return redirect()->route('perawat.dashboard');
-            case 'resepsionis':
-                return redirect()->route('resepsionis.dashboard');
-            case 'pemilik':
-                return redirect()->route('pemilik.dashboard');
-            default:
-                Auth::logout();
-                return redirect('/login')->withErrors([
-                    'email' => 'Role pengguna tidak dikenali.'
-                ]);
-        }
+    switch ($role) {
+        case 'administrator':
+            return redirect()->route('admin.dashboard');
+        case 'dokter':
+            return redirect()->route('dokter.dashboard');
+        case 'perawat':
+            return redirect()->route('perawat.dashboard');
+        case 'resepsionis':
+            return redirect()->route('resepsionis.dashboard');
+        case 'pemilik':
+            return redirect()->route('pemilik.dashboard');
+        default:
+            Auth::logout();
+            return redirect()->route('login')->withErrors([
+                'email' => 'Role pengguna tidak dikenali.'
+            ]);
     }
+}
+
 }

@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
@@ -10,26 +11,22 @@ class Pet extends Model
     public $timestamps = false;
 
     protected $fillable = [
-        'nama_hewan',
-        'umur',
-        'jenis_kelamin',
-        'idkategori',
-        'idras_hewan',
-        'iduser'
+        'nama', 'tanggal_lahir', 'warna_tanda',
+        'jenis_kelamin', 'idpemilik', 'idras_hewan'
     ];
 
-    public function kategori()
+    public function pemilik()
     {
-        return $this->belongsTo(Kategori::class, 'idkategori', 'idkategori');
+        return $this->belongsTo(Pemilik::class, 'idpemilik');
     }
 
-    public function ras()
+    public function rasHewan()
     {
-        return $this->belongsTo(RasHewan::class, 'idras_hewan', 'idras_hewan');
+        return $this->belongsTo(RasHewan::class, 'idras_hewan');
     }
 
-    public function user()
+    public function temuDokter()
     {
-        return $this->belongsTo(User::class, 'iduser', 'iduser');
+        return $this->hasMany(TemuDokter::class, 'idpet');
     }
 }

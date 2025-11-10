@@ -10,43 +10,27 @@ class RoleController extends Controller
 {
     public function index()
     {
-        $data = Role::all();
-        return view('admin.role.index', compact('data'));
-    }
-
-    public function create()
-    {
-        return view('admin.role.create');
+        $roles = Role::orderBy('idrole')->get();
+        return view('admin.role.index', compact('roles'));
     }
 
     public function store(Request $request)
     {
-        $validated = $this->validateRole($request);
-
-        $formatted = $this->formatNamaRole($validated['nama_role']);
-        $this->createRole($formatted);
-
-        return redirect()
-            ->route('admin.role.index')
-            ->with('success', 'Data role baru berhasil ditambahkan!');
+        $request->validate(['nama_role' => 'required|string|max:100']);
+        Role::create($request->only('nama_role'));
+        return back()->with('success', 'Role baru ditambahkan.');
     }
 
-    private function validateRole(Request $request)
+    public function update(Request $request, $id)
     {
-        return $request->validate([
-            'nama_role' => 'required|string|max:50|unique:role,nama_role',
-        ], [
-            'nama_role.required' => 'Nama role wajib diisi!',
-            'nama_role.unique' => 'Role sudah terdaftar!',
-        ]);
+        $request->validate(['nama_role' => 'required|string|max:100']);
+        Role::where('idrole', $id)->update($request->only('nama_role'));
+        return back()->with('success', 'Role berhasil diperbarui.');
     }
-    private function createRole(string $nama)
+
+    public function destroy($id)
     {
-        Role::create(['nama_role' => $nama]);
-    }
-    
-    private function formatNamaRole(string $nama)
-    {
-        return strtolower(trim($nama));
+        Role::destroy($id);
+        return back()->with('success', 'Role berhasil dihapus.');
     }
 }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use App\Models\RasHewan;
 use App\Models\JenisHewan;
 
@@ -11,50 +12,42 @@ class RasHewanController extends Controller
 {
     public function index()
     {
-        $data = RasHewan::with('jenis')->get();
-        return view('admin.ras_hewan.index', compact('data'));
-    }
+        $ras = DB::table('ras_hewan')
+            ->join('jenis_hewan', 'ras_hewan.idjenis_hewan', '=', 'jenis_hewan.idjenis_hewan')
+            ->select('ras_hewan.*', 'jenis_hewan.nama_jenis_hewan')
+            ->orderBy('ras_hewan.idras_hewan')
+            ->get();
 
-    public function create()
-    {
         $jenis = JenisHewan::all();
-        return view('admin.ras_hewan.create', compact('jenis'));
+
+        return view('admin.ras_hewan.index', compact('ras', 'jenis'));
     }
 
     public function store(Request $request)
     {
-        $validated = $this->validateRasHewan($request);
-
-        $formattedName = $this->formatNamaRas($validated['nama_ras']);
-        $this->createRasHewan($formattedName, $validated['idjenis_hewan']);
-
-        return redirect()
-            ->route('admin.ras-hewan.index')
-            ->with('success', 'Data Ras Hewan berhasil ditambahkan!');
-    }
-
-    private function validateRasHewan(Request $request)
-    {
-        return $request->validate([
-            'nama_ras' => 'required|string|max:100|unique:ras_hewan,nama_ras',
-            'idjenis_hewan' => 'required|exists:jenis_hewan,idjenis_hewan'
-        ], [
-            'nama_ras.required' => 'Nama ras wajib diisi!',
-            'nama_ras.unique' => 'Ras hewan sudah ada!',
-            'idjenis_hewan.required' => 'Jenis hewan wajib dipilih!',
+        $request->validate([
+            'nama_ras' => 'required|string|max:100',
+            'idjenis_hewan' => 'required|integer'
         ]);
+
+        RasHewan::create($request->only('nama_ras', 'idjenis_hewan'));
+        return back()->with('success', 'Ras hewan ditambahkan.');
     }
 
-    private function createRasHewan(string $nama, int $idjenis)
+    public function update(Request $request, $id)
     {
-        RasHewan::create([
-            'nama_ras' => $nama,
-            'idjenis_hewan' => $idjenis
+        $request->validate([
+            'nama_ras' => 'required|string|max:100',
+            'idjenis_hewan' => 'required|integer'
         ]);
+
+        RasHewan::where('idras_hewan', $id)->update($request->only('nama_ras', 'idjenis_hewan'));
+        return back()->with('success', 'Ras hewan diperbarui.');
     }
 
-    private function formatNamaRas(string $nama)
+    public function destroy($id)
     {
-        return ucwords(strtolower(trim($nama)));
+        RasHewan::destroy($id);
+        return back()->with('success', 'Ras hewan dihapus.');
     }
 }

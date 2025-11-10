@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models;
 
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -15,28 +16,18 @@ class User extends Authenticatable
     protected $fillable = ['nama', 'email', 'password'];
     protected $hidden = ['password'];
 
-
     public function roles()
     {
-        return $this->belongsToMany(
-            Role::class,
-            'role_user',
-            'iduser',
-            'idrole',
-            'iduser',
-            'idrole'
-        );
+        return $this->belongsToMany(Role::class, 'role_user', 'iduser', 'idrole');
     }
 
-    public function pets()
+    public function pemilik()
     {
-        return $this->hasMany(Pet::class, 'iduser', 'iduser');
+        return $this->hasOne(Pemilik::class, 'iduser');
     }
 
-    public function getPrimaryRoleAttribute()
+    public function roleUsers()
     {
-        $role = $this->roles()->first();
-        return $role ? strtolower($role->nama_role) : null;
+        return $this->hasMany(RoleUser::class, 'iduser');
     }
-
 }

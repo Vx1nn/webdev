@@ -10,44 +10,27 @@ class KategoriKlinisController extends Controller
 {
     public function index()
     {
-        $data = KategoriKlinis::all();
-        return view('admin.kategori_klinis.index', compact('data'));
-    }
-
-    public function create()
-    {
-        return view('admin.kategori_klinis.create');
+        $kategori_klinis = KategoriKlinis::orderBy('idkategori_klinis')->get();
+        return view('admin.kategori_klinis.index', compact('kategori_klinis'));
     }
 
     public function store(Request $request)
     {
-        $validated = $this->validateKategoriKlinis($request);
-
-        $formatted = $this->formatNamaKategoriKlinis($validated['nama_kategori_klinis']);
-        $this->createKategoriKlinis($formatted);
-
-        return redirect()
-            ->route('admin.kategori-klinis.index')
-            ->with('success', 'Data kategori klinis berhasil ditambahkan!');
+        $request->validate(['nama_kategori_klinis' => 'required|string|max:100']);
+        KategoriKlinis::create($request->only('nama_kategori_klinis'));
+        return back()->with('success', 'Kategori klinis ditambahkan.');
     }
 
-    private function validateKategoriKlinis(Request $request)
+    public function update(Request $request, $id)
     {
-        return $request->validate([
-            'nama_kategori_klinis' => 'required|string|max:100|unique:kategori_klinis,nama_kategori_klinis',
-        ], [
-            'nama_kategori_klinis.required' => 'Nama kategori klinis wajib diisi!',
-            'nama_kategori_klinis.unique' => 'Nama kategori klinis sudah terdaftar!',
-        ]);
+        $request->validate(['nama_kategori_klinis' => 'required|string|max:100']);
+        KategoriKlinis::where('idkategori_klinis', $id)->update($request->only('nama_kategori_klinis'));
+        return back()->with('success', 'Kategori klinis diperbarui.');
     }
 
-    private function createKategoriKlinis(string $nama)
+    public function destroy($id)
     {
-        KategoriKlinis::create(['nama_kategori_klinis' => $nama]);
-    }
-
-    private function formatNamaKategoriKlinis(string $nama)
-    {
-        return ucwords(strtolower(trim($nama)));
+        KategoriKlinis::destroy($id);
+        return back()->with('success', 'Kategori klinis dihapus.');
     }
 }

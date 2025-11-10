@@ -10,43 +10,27 @@ class JenisHewanController extends Controller
 {
     public function index()
     {
-        $data = JenisHewan::all();
-        return view('admin.jenis_hewan.index', compact('data'));
-    }
-
-    public function create()
-    {
-        return view('admin.jenis_hewan.create');
+        $jenis = JenisHewan::orderBy('idjenis_hewan')->get();
+        return view('admin.jenis_hewan.index', compact('jenis'));
     }
 
     public function store(Request $request)
     {
-        $validated = $this->validateJenisHewan($request);
-
-        $formattedName = $this->formatNamaJenisHewan($validated['nama_jenis']);
-        $this->createJenisHewan($formattedName);
-
-        return redirect()
-            ->route('admin.jenis-hewan.index')
-            ->with('success', 'Data Jenis Hewan berhasil ditambahkan!');
+        $request->validate(['nama_jenis_hewan' => 'required|string|max:100']);
+        JenisHewan::create($request->only('nama_jenis_hewan'));
+        return back()->with('success', 'Jenis hewan baru ditambahkan.');
     }
 
-    private function validateJenisHewan(Request $request)
+    public function update(Request $request, $id)
     {
-        return $request->validate([
-            'nama_jenis' => 'required|string|max:100|unique:jenis_hewan,nama_jenis',
-        ], [
-            'nama_jenis.required' => 'Nama jenis hewan wajib diisi!',
-            'nama_jenis.unique' => 'Nama jenis hewan sudah ada di database!',
-        ]);
-    }
-    private function createJenisHewan(string $namaJenis)
-    {
-        JenisHewan::create(['nama_jenis' => $namaJenis]);
+        $request->validate(['nama_jenis_hewan' => 'required|string|max:100']);
+        JenisHewan::where('idjenis_hewan', $id)->update($request->only('nama_jenis_hewan'));
+        return back()->with('success', 'Jenis hewan diperbarui.');
     }
 
-    private function formatNamaJenisHewan(string $nama)
+    public function destroy($id)
     {
-        return ucfirst(strtolower(trim($nama)));
+        JenisHewan::destroy($id);
+        return back()->with('success', 'Jenis hewan dihapus.');
     }
 }

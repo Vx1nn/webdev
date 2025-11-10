@@ -4,65 +4,63 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\KodeTerapi;
+use Illuminate\Support\Facades\DB;
+use App\Models\KodeTindakanTerapi;
+use App\Models\Kategori;
+use App\Models\KategoriKlinis;
 
 class KodeTindakanTerapiController extends Controller
 {
     public function index()
     {
-        $data = KodeTerapi::all();
-        return view('admin.kode_tindakan_terapi.index', compact('data'));
-    }
+        $tindakan = DB::table('kode_tindakan_terapi')
+            ->join('kategori', 'kode_tindakan_terapi.idkategori', '=', 'kategori.idkategori')
+            ->join('kategori_klinis', 'kode_tindakan_terapi.idkategori_klinis', '=', 'kategori_klinis.idkategori_klinis')
+            ->select(
+                'kode_tindakan_terapi.*',
+                'kategori.nama_kategori',
+                'kategori_klinis.nama_kategori_klinis'
+            )
+            ->orderBy('idkode_tindakan_terapi')
+            ->get();
 
-    public function create()
-    {
-        return view('admin.kode_tindakan_terapi.create');
+        $kategori = Kategori::all();
+        $kategori_klinis = KategoriKlinis::all();
+
+        return view('admin.tindakan.index', compact('tindakan', 'kategori', 'kategori_klinis'));
     }
 
     public function store(Request $request)
     {
-        $validated = $this->validateKodeTindakanTerapi($request);
-
-        $kode = strtoupper(trim($validated['kode']));
-        $nama = $this->formatNamaTerapi($validated['nama_terapi']);
-        $harga = (int) $validated['harga'];
-
-        $this->createKodeTindakanTerapi($kode, $nama, $harga);
-
-        return redirect()
-            ->route('admin.kode-tindakan-terapi.index')
-            ->with('success', 'Data Kode Tindakan Terapi berhasil ditambahkan!');
-    }
-
-    // Validasi
-    private function validateKodeTindakanTerapi(Request $request)
-    {
-        return $request->validate([
-            'kode' => 'required|string|max:50|unique:kode_terapi,kode',
-            'nama_terapi' => 'required|string|max:100',
-            'harga' => 'required|numeric|min:0',
-        ], [
-            'kode.required' => 'Kode tindakan wajib diisi!',
-            'kode.unique' => 'Kode tindakan sudah terdaftar!',
-            'nama_terapi.required' => 'Nama terapi wajib diisi!',
-            'harga.required' => 'Harga wajib diisi!',
-            'harga.numeric' => 'Harga harus berupa angka!',
+        $request->validate([
+            'kode' => 'required|string|max:5|unique:kode_tindakan_terapi,kode',
+            'deskripsi_tindakan_terapi' => 'required|string',
+            'idkategori' => 'required|integer',
+            'idkategori_klinis' => 'required|integer'
         ]);
+
+        KodeTindakanTerapi::create($request->only('kode', 'deskripsi_tindakan_terapi', 'idkategori', 'idkategori_klinis'));
+        return back()->with('success', 'Tindakan terapi ditambahkan.');
     }
 
-    // Helper: simpan
-    private function createKodeTindakanTerapi(string $kode, string $nama, int $harga)
+    public function update(Request $request, $id)
     {
-        KodeTerapi::create([
-            'kode' => $kode,
-            'nama_terapi' => $nama,
-            'harga' => $harga
+        $request->validate([
+            'kode' => "required|string|max:5|unique:kode_tindakan_terapi,kode,$id,idkode_tindakan_terapi",
+            'deskripsi_tindakan_terapi' => 'required|string',
+            'idkategori' => 'required|integer',
+            'idkategori_klinis' => 'required|integer'
         ]);
+
+        KodeTindakanTerapi::where('idkode_tindakan_terapi', $id)
+            ->update($request->only('kode', 'deskripsi_tindakan_terapi', 'idkategori', 'idkategori_klinis'));
+
+        return back()->with('success', 'Tindakan terapi diperbarui.');
     }
 
-    // Helper: format nama
-    private function formatNamaTerapi(string $nama)
+    public function destroy($id)
     {
-        return ucwords(strtolower(trim($nama)));
+        KodeTindakanTerapi::destroy($id);
+        return back()->with('success', 'Tindakan terapi dihapus.');
     }
 }

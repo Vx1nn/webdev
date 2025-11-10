@@ -36,11 +36,15 @@ Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
 Route::post('/login', [AuthController::class, 'login'])->name('login.process');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
+
 Auth::routes();
 
-Route::middleware(['isAdmin'])->prefix('admin')->name('admin.')
+Route::prefix('admin')
+    ->name('admin.')
+    ->middleware(['auth', 'isAdmin'])
     ->group(function () {
-        Route::get('/dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
+        Route::get('/user', [UserController::class, 'index'])->name('admin.user');
+        Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
         Route::get('/jenis-hewan', [JenisHewanController::class, 'index'])->name('jenis-hewan.index');
         Route::get('/jenis-hewan/create', [JenisHewanController::class, 'create'])->name('jenis-hewan.create');
         Route::post('/jenis-hewan/store', [JenisHewanController::class, 'store'])->name('jenis-hewan.store');
