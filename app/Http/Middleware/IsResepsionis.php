@@ -9,7 +9,7 @@ class IsResepsionis
 {
     public function handle($request, Closure $next)
     {
-        if (Auth::check() && strtolower(Auth::user()->primary_role === 'resepsionis')) {
+        if (Auth::check() && strtolower(Auth::user()->primary_role ?? '') === 'resepsionis') {
             return $next($request);
         }
 

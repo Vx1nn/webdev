@@ -3,9 +3,12 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class RasHewan extends Model
 {
+    use HasFactory;
+
     protected $table = 'ras_hewan';
     protected $primaryKey = 'idras_hewan';
     public $timestamps = false;
@@ -22,3 +25,4 @@ class RasHewan extends Model
         return $this->hasMany(Pet::class, 'idras_hewan');
     }
 }
+

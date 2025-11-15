@@ -14,7 +14,9 @@
   </a>
   <div class="navbar-links">
     <a href="{{ route('admin.dashboard') }}">Data Master</a>
-    <a href="{{ route('login') }}">Logout</a>
+    <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display:inline;"> @csrf
+    <a href="#" onclick="event.preventDefault(); this.closest('form').submit();">Logout</a>
+    </form>
   </div>
 </div>
 
@@ -23,14 +25,7 @@
         <div class="card-header">Dashboard Admin</div>
         <div class="card-body">
         <div class="grid">
-            <a href="{{ route('admin.user') }}" class="list-item hover-lift hover-lift">Daftar User</a>
-            <a href="{{ route('admin.role') }}" class="list-item hover-lift hover-lift">Daftar Role</a>
-            <a href="{{ route('admin.jenis-hewan') }}" class="list-item hover-lift hover-lift">Daftar Jenis Hewan</a>
-            <a href="{{ route('admin.ras-hewan') }}" class="list-item hover-lift hover-lift">Daftar Ras Hewan</a>
-            <a href="{{ route('admin.kategori') }}" class="list-item hover-lift hover-lift">Daftar Kategori</a>
-            <a href="{{ route('admin.kategori-klinis') }}" class="list-item hover-lift hover-lift">Daftar Kategori Klinis</a>
-            <a href="{{ route('admin.kode-terapi') }}" class="list-item hover-lift hover-lift">Daftar Kode Tindakan Terapi</a>
-            <a href="{{ route('admin.pet') }}" class="list-item hover-lift hover-lift">Daftar Pet</a>
+
         </div>
         </div>
     </div>

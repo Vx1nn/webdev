@@ -1,11 +1,13 @@
 <?php
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class RoleUser extends Model
 {
+    use HasFactory;
+
     protected $table = 'role_user';
     protected $primaryKey = 'idrole_user';
     public $timestamps = false;
@@ -25,10 +27,5 @@ class RoleUser extends Model
     public function rekamMedis()
     {
         return $this->hasMany(RekamMedis::class, 'dokter_pemeriksa');
-    }
-
-    public function temuDokter()
-    {
-        return $this->hasMany(TemuDokter::class, 'idrole_user');
     }
 }

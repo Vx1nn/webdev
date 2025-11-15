@@ -1,11 +1,13 @@
 <?php
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class KategoriKlinis extends Model
 {
+    use HasFactory;
+
     protected $table = 'kategori_klinis';
     protected $primaryKey = 'idkategori_klinis';
     public $timestamps = false;

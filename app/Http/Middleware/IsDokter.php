@@ -9,7 +9,7 @@ class IsDokter
 {
     public function handle($request, Closure $next)
     {
-        if (Auth::check() && strtolower(Auth::user()->primary_role === 'dokter')) {
+        if (Auth::check() && strtolower(Auth::user()->primary_role ?? '') === 'dokter') {
             return $next($request);
         }
 

@@ -9,7 +9,7 @@ class IsPerawat
 {
     public function handle($request, Closure $next)
     {
-        if (Auth::check() && strtolower(Auth::user()->primary_role === 'perawat')) {
+        if (Auth::check() && strtolower(Auth::user()->primary_role ?? '') === 'perawat') {
             return $next($request);
         }
 

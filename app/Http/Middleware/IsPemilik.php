@@ -9,7 +9,7 @@ class IsPemilik
 {
     public function handle($request, Closure $next)
     {
-        if (Auth::check() && strtolower(Auth::user()->primary_role === 'pemilik')) {
+        if (Auth::check() && strtolower(Auth::user()->primary_role ?? '') === 'pemilik') {
             return $next($request);
         }
 
