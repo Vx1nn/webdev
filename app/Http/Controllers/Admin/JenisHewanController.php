@@ -4,33 +4,41 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\JenisHewan;
+use Illuminate\Support\Facades\DB;
 
 class JenisHewanController extends Controller
 {
-    public function index()
-    {
-        $jenis = JenisHewan::orderBy('idjenis_hewan')->get();
-        return view('admin.jenis_hewan.index', compact('jenis'));
-    }
+  public function index()
+  {
+    $data = DB::table('jenis_hewan')->get();
+    return view('admin.jenis-hewan.index', compact('data'));
+  }
 
-    public function store(Request $request)
-    {
-        $request->validate(['nama_jenis_hewan' => 'required|string|max:100']);
-        JenisHewan::create($request->only('nama_jenis_hewan'));
-        return back()->with('success', 'Jenis hewan baru ditambahkan.');
-    }
+  public function store(Request $r)
+  {
+    $r->validate(['nama_jenis_hewan' => 'required|string|max:100']);
 
-    public function update(Request $request, $id)
-    {
-        $request->validate(['nama_jenis_hewan' => 'required|string|max:100']);
-        JenisHewan::where('idjenis_hewan', $id)->update($request->only('nama_jenis_hewan'));
-        return back()->with('success', 'Jenis hewan diperbarui.');
-    }
+    DB::table('jenis_hewan')->insert([
+      'nama_jenis_hewan' => ucwords(strtolower($r->nama_jenis_hewan)),
+    ]);
 
-    public function destroy($id)
-    {
-        JenisHewan::destroy($id);
-        return back()->with('success', 'Jenis hewan dihapus.');
-    }
+    return back();
+  }
+
+  public function edit($id, Request $r)
+  {
+    $r->validate(['nama_jenis_hewan' => 'required|string|max:100']);
+
+    DB::table('jenis_hewan')->where('idjenis_hewan', $id)->update([
+      'nama_jenis_hewan' => ucwords(strtolower($r->nama_jenis_hewan)),
+    ]);
+
+    return back();
+  }
+
+  public function delete($id)
+  {
+    DB::table('jenis_hewan')->where('idjenis_hewan', $id)->delete();
+    return back();
+  }
 }

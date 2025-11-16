@@ -45,8 +45,36 @@
         </div>
       </div>
     </div>
+      @auth
+         @php
+         $role = strtolower(Auth::user()->roleUser->first()->role->nama_role ?? '');
+         $roleDisplay = match ($role) {
+            'administrator' => 'Admin',
+            'dokter' => 'Dokter',
+            'perawat' => 'Perawat', 
+            'resepsionis' => 'Resepsionis',
+            'pemilik' => 'Pemilik',
+            default => 'User',
+         };
+         $prefix = match ($role) {
+            'administrator' => 'admin',
+            'dokter' => 'dokter',
+            'perawat' => 'perawat',
+            'resepsionis' => 'resepsionis',
+            'pemilik' => 'pemilik',
+            default => null,
+         };
+         @endphp
 
-  <a href="{{ route('login') }}">Login</a>
-
+         @if($prefix)
+         <a href="{{ route($prefix . '.dashboard') }}">{{ $roleDisplay }} Page</a>
+         <form action="{{ route('logout') }}" method="POST" class="logout-form">
+            @csrf
+            <a href="#" onclick="event.preventDefault(); this.closest('form').submit();">Logout</a>
+         </form>
+         @endif
+      @else
+         <a href="{{ route('login') }}">Login</a>
+      @endauth
   </div>
 </div>

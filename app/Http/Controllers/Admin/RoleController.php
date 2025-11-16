@@ -4,33 +4,43 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\Role;
+use Illuminate\Support\Facades\DB;
 
 class RoleController extends Controller
 {
-    public function index()
-    {
-        $roles = Role::orderBy('idrole')->get();
-        return view('admin.role.index', compact('roles'));
-    }
+  public function index()
+  {
+    $data = DB::table('role')->get();
+    return view('admin.role.index', compact('data'));
+  }
 
-    public function store(Request $request)
-    {
-        $request->validate(['nama_role' => 'required|string|max:100']);
-        Role::create($request->only('nama_role'));
-        return back()->with('success', 'Role baru ditambahkan.');
-    }
+  public function store(Request $r)
+  {
+    $r->validate(['nama_role' => 'required|string|max:50']);
 
-    public function update(Request $request, $id)
-    {
-        $request->validate(['nama_role' => 'required|string|max:100']);
-        Role::where('idrole', $id)->update($request->only('nama_role'));
-        return back()->with('success', 'Role berhasil diperbarui.');
-    }
+    DB::table('role')->insert([
+      'nama_role' => ucwords(strtolower($r->nama_role)),
+    ]);
 
-    public function destroy($id)
-    {
-        Role::destroy($id);
-        return back()->with('success', 'Role berhasil dihapus.');
-    }
+    return back();
+  }
+
+  public function edit($id, Request $r)
+  {
+    $r->validate(['nama_role' => 'required|string|max:50']);
+
+    DB::table('role')
+      ->where('idrole', $id)
+      ->update([
+        'nama_role' => ucwords(strtolower($r->nama_role)),
+      ]);
+
+    return back();
+  }
+
+  public function delete($id)
+  {
+    DB::table('role')->where('idrole', $id)->delete();
+    return back();
+  }
 }

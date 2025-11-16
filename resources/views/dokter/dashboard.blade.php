@@ -1,46 +1,33 @@
-<!DOCTYPE html>
-<html lang="id">
+@include('layouts.lte.navbar')
+
+<!doctype html>
+<html lang="id" data-theme="light">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard Admin</title>
-  <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <link rel="stylesheet" href="assets/css/pico.yellow.min.css">
+    <link rel="stylesheet" href="assets/css/custom.css">
+    <title>Dashboard Dokter - RSHP UNAIR</title>
 </head>
+
 <body>
-<div class="navbar">
-  <a href="{{ route('dokter.dashboard') }}" class="navbar-brand">
-    <img src="{{ asset('assets/img/unair-logo.png') }}" alt="UNAIR Logo">
-    RSHP UNAIR
-  </a>
-  <div class="navbar-links">
-    <a href="{{ route('dokter.dashboard') }}">Home</a>
-    <a href="{{ route('login') }}">Logout</a>
-  </div>
-</div>
+    <main class="container">
+        <section class="hero">
+            <div class="center-row">
+                <h1>Welcome</h1>
+                <p class="lead">Anda sekarang berada di dashboard Dokter.</p>
+            </div>
+        </section>
 
-<div class="container">
-  <div class="card shadow radius">
-    <div class="card-header">Dashboard Dokter</div>
-    <div class="card-body">
-      <h3 class="sub-title">Kategori Klinis</h3>
-      <ul>
-        @foreach($kategori_klinis as $k)
-          <li>{{ $k->nama_kategori_klinis }}</li>
-        @endforeach
-      </ul>
-
-      <h3 class="sub-title">Kode Terapi</h3>
-      <table class="data-table">
-        <thead><tr><th>Kode</th><th>Nama Terapi</th><th>Harga</th></tr></thead>
-        <tbody>
-        @foreach($kode_terapi as $t)
-          <tr><td>{{ $t->kode }}</td><td>{{ $t->nama_terapi }}</td><td>Rp {{ number_format($t->harga,0,',','.') }}</td></tr>
-        @endforeach
-        </tbody>
-      </table>
-    </div>
-  </div>
-</div>
-
+        <section class="services-grid" aria-label="Menu Dokter - Grid">
+            <article class="service-card" aria-labelledby="m-rekammedis">
+                <h4 id="m-rekam-medis">Rekam Medis</h4>
+                <p class="short">Daftar seluruh rekam medis pasien hewan.</p>
+                <small class="muted"><a href="dokter/rekam-medis">Lihat Data</a></small>
+            </article>
+        </section>
+    </main>
 </body>
+
 </html>

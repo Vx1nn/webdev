@@ -4,33 +4,47 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\KategoriKlinis;
+use Illuminate\Support\Facades\DB;
 
 class KategoriKlinisController extends Controller
 {
-    public function index()
-    {
-        $kategori_klinis = KategoriKlinis::orderBy('idkategori_klinis')->get();
-        return view('admin.kategori_klinis.index', compact('kategori_klinis'));
-    }
+  public function index()
+  {
+    $data = DB::table('kategori_klinis')->get();
+    return view('admin.kategori-klinis.index', compact('data'));
+  }
 
-    public function store(Request $request)
-    {
-        $request->validate(['nama_kategori_klinis' => 'required|string|max:100']);
-        KategoriKlinis::create($request->only('nama_kategori_klinis'));
-        return back()->with('success', 'Kategori klinis ditambahkan.');
-    }
+  public function store(Request $r)
+  {
+    $r->validate([
+      'nama_kategori_klinis' => 'required|string|max:100'
+    ]);
 
-    public function update(Request $request, $id)
-    {
-        $request->validate(['nama_kategori_klinis' => 'required|string|max:100']);
-        KategoriKlinis::where('idkategori_klinis', $id)->update($request->only('nama_kategori_klinis'));
-        return back()->with('success', 'Kategori klinis diperbarui.');
-    }
+    DB::table('kategori_klinis')->insert([
+      'nama_kategori_klinis' => ucwords(strtolower($r->nama_kategori_klinis)),
+    ]);
 
-    public function destroy($id)
-    {
-        KategoriKlinis::destroy($id);
-        return back()->with('success', 'Kategori klinis dihapus.');
-    }
+    return back();
+  }
+
+  public function edit($id, Request $r)
+  {
+    $r->validate([
+      'nama_kategori_klinis' => 'required|string|max:100'
+    ]);
+
+    DB::table('kategori_klinis')
+      ->where('idkategori_klinis', $id)
+      ->update([
+        'nama_kategori_klinis' => ucwords(strtolower($r->nama_kategori_klinis)),
+      ]);
+
+    return back();
+  }
+
+  public function delete($id)
+  {
+    DB::table('kategori_klinis')->where('idkategori_klinis', $id)->delete();
+    return back();
+  }
 }

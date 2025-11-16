@@ -484,3 +484,137 @@ input::placeholder {
   margin-bottom: 15px;
   border-radius: 5px;
 }
+
+/* Auth Dropdown Styles */
+.auth-dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.auth-dropdown-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 14px;
+  color: #495057;
+}
+
+.auth-dropdown-btn:hover {
+  background: #e9ecef;
+  border-color: #adb5bd;
+}
+
+.auth-user-name {
+  font-weight: 500;
+}
+
+.auth-dropdown-arrow {
+  font-size: 10px;
+  transition: transform 0.3s ease;
+}
+
+.auth-dropdown:hover .auth-dropdown-arrow {
+  transform: rotate(180deg);
+}
+
+.auth-dropdown-menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 4px;
+  background: white;
+  border: 1px solid #dee2e6;
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  min-width: 180px;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-10px);
+  transition: all 0.3s ease;
+  z-index: 1000;
+}
+
+.auth-dropdown:hover .auth-dropdown-menu {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.auth-dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  text-decoration: none;
+  color: #495057;
+  transition: background-color 0.2s ease;
+  border: none;
+  background: none;
+  width: 100%;
+  text-align: left;
+  font-size: 14px;
+}
+
+.auth-dropdown-item:hover {
+  background: #f8f9fa;
+  color: #007bff;
+}
+
+.auth-icon {
+  font-size: 14px;
+  width: 16px;
+  text-align: center;
+}
+
+.auth-logout-form {
+  margin: 0;
+}
+
+.auth-logout-btn {
+  border-top: 1px solid #e9ecef;
+  color: #dc3545;
+}
+
+.auth-logout-btn:hover {
+  color: #dc3545;
+  background: #fff5f5;
+}
+
+.auth-login-link {
+  padding: 8px 20px;
+  background: #007bff;
+  color: white;
+  text-decoration: none;
+  border-radius: 6px;
+  transition: background-color 0.3s ease;
+  font-size: 14px;
+}
+
+.auth-login-link:hover {
+  background: #0056b3;
+  color: white;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .auth-dropdown-menu {
+    right: -50px;
+    min-width: 160px;
+  }
+  
+  .auth-dropdown-btn {
+    padding: 6px 12px;
+    font-size: 13px;
+  }
+  
+  .auth-login-link {
+    padding: 6px 16px;
+    font-size: 13px;
+  }
+}

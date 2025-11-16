@@ -1,45 +1,34 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard Perawat</title>
-  <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
-</head>
-<body>
-<div class="navbar">
-  <a href="{{ route('perawat.dashboard') }}" class="navbar-brand">
-    <img src="{{ asset('assets/img/unair-logo.png') }}" alt="UNAIR Logo">
-    RSHP UNAIR
-  </a>
-  <div class="navbar-links">
-    <a href="{{ route('perawat.dashboard') }}">Data Master</a>
-    <a href="{{ route('login') }}">Logout</a>
-  </div>
-</div>
-<div class="container">
-  <div class="card shadow radius">
-    <div class="card-header">Dashboard Perawat</div>
-    <div class="card-body">
-      <p>Berikut daftar kategori klinis dan kode terapi (read-only):</p>
-      <h3 class="sub-title">Kategori Klinis</h3>
-      <ul>
-        @foreach($kategori_klinis as $k)
-          <li>{{ $k->nama_kategori_klinis }}</li>
-        @endforeach
-      </ul>
+@include('layouts.lte.navbar')
 
-      <h3 class="sub-title">Kode Terapi</h3>
-      <table class="data-table">
-        <thead><tr><th>Kode</th><th>Nama Terapi</th><th>Harga</th></tr></thead>
-        <tbody>
-        @foreach($kode_terapi as $t)
-          <tr><td>{{ $t->kode }}</td><td>{{ $t->nama_terapi }}</td><td>Rp {{ number_format($t->harga,0,',','.') }}</td></tr>
-        @endforeach
-        </tbody>
-      </table>
-    </div>
-  </div>
-</div>
+<!doctype html>
+<html lang="id" data-theme="light">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <link rel="stylesheet" href="assets/css/pico.yellow.min.css">
+    <link rel="stylesheet" href="assets/css/custom.css">
+    <title>Dashboard Admin - RSHP UNAIR</title>
+</head>
+
+<body>
+    <main class="container">
+        <section class="hero">
+            <div class="center-row">
+                <h1>Welcome</h1>
+                <p class="lead">Anda sekarang berada di dashboard Perawat.</p>
+            </div>
+        </section>
+
+        <!-- Grid Menu -->
+        <section class="services-grid" aria-label="Menu Dokter - Grid">
+            <article class="service-card" aria-labelledby="m-rekammedis">
+                <h4 id="m-rekam-medis">Rekam Medis</h4>
+                <p class="short">Catatan tindakan dan observasi pasien.</p>
+                <small class="muted"><a href="perawat/rekam-medis">Lihat Data</a></small>
+            </article>
+        </section>
+    </main>
 </body>
+
 </html>

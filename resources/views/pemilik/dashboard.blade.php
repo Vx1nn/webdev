@@ -1,46 +1,46 @@
-<!DOCTYPE html>
-<html lang="id">
+@include('layouts.lte.navbar')
+
+<!doctype html>
+<html lang="id" data-theme="light">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard Admin</title>
-  <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <link rel="stylesheet" href="assets/css/pico.yellow.min.css">
+    <link rel="stylesheet" href="assets/css/custom.css">
+    <title>Dashboard Pemilik - RSHP UNAIR</title>
 </head>
 <body>
-<div class="navbar">
-  <a href="{{ route('pemilik.dashboard') }}" class="navbar-brand">
-    <img src="{{ asset('assets/img/unair-logo.png') }}" alt="UNAIR Logo">
-    RSHP UNAIR
-  </a>
-  <div class="navbar-links">
-    <a href="{{ route('pemilik.dashboard') }}">Home</a>
-    <a href="{{ route('login') }}">Logout</a>
-  </div>
-</div>
+    <main class="container">
+        <section class="hero">
+            <div class="center-row">
+                <h1>Welcome</h1>
+                <p class="lead">Anda sekarang berada di dashboard Pemilik.</p>
+            </div>
+        </section>
 
-<div class="container">
-  <div class="card shadow radius">
-    <div class="card-header">Dashboard Pemilik</div>
-    <div class="card-body">
-      <p>Selamat datang, <strong>{{ $user->nama }}</strong>! Berikut hewan peliharaan Anda:</p>
-      <table class="data-table">
-        <thead><tr><th>Nama Hewan</th><th>Ras</th><th>Kategori</th><th>Umur</th><th>Jenis Kelamin</th></tr></thead>
-        <tbody>
-        @forelse($pets as $pet)
-          <tr>
-            <td>{{ $pet->nama_hewan }}</td>
-            <td>{{ $pet->ras->nama_ras ?? '-' }}</td>
-            <td>{{ $pet->kategori->nama_kategori ?? '-' }}</td>
-            <td>{{ $pet->umur }}</td>
-            <td>{{ ucfirst($pet->jenis_kelamin) }}</td>
-          </tr>
-        @empty
-          <tr><td colspan="5" class="text-center">Belum ada hewan terdaftar.</td></tr>
-        @endforelse
-        </tbody>
-      </table>
-    </div>
-  </div>
-</div>
+        <!-- Grid Menu -->
+        <section class="services-grid" aria-label="Menu Perawat - Grid">
+            <article class="service-card" aria-labelledby="m-pets">
+                <h4 id="m-pet">Hewan Peliharaan</h4>
+                <p class="short">Daftar hewan yang saya daftarkan di RSHP.</p>
+                <small class="muted"><a href="pemilik/pets">Lihat Data</a></small>
+            </article>
+
+            <article class="service-card" aria-labelledby="m-rekammedis">
+                <h4 id="m-rekam-medis">Rekam Medis Saya</h4>
+                <p class="short">Riwayat pemeriksaan hewan milik saya.</p>
+                <small class="muted"><a href="pemilik/rekam-medis">Lihat Data</a></small>
+            </article>
+
+            <article class="service-card" aria-labelledby="m-reservasi">
+                <h4 id="m-reservasi">Reservasi</h4>
+                <p class="short">Jadwal dan status pertemuan dengan dokter.</p>
+                <small class="muted"><a href="pemilik/reservasi">Lihat Data</a></small>
+            </article>
+        </section>
+
+        
+    </main>
 </body>
 </html>

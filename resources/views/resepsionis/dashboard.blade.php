@@ -1,46 +1,44 @@
-<!DOCTYPE html>
-<html lang="id">
+@include('layouts.lte.navbar')
+
+<!doctype html>
+<html lang="id" data-theme="light">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard Resepsionis</title>
-  <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <link rel="stylesheet" href="assets/css/pico.yellow.min.css">
+    <link rel="stylesheet" href="assets/css/custom.css">
+    <title>Dashboard Resepsionis - RSHP UNAIR</title>
 </head>
 <body>
-<div class="navbar">
-  <a href="{{ route('resepsionis.dashboard') }}" class="navbar-brand">
-    <img src="{{ asset('assets/img/unair-logo.png') }}" alt="UNAIR Logo">
-    RSHP UNAIR
-  </a>
-  <div class="navbar-links">
-    <a href="{{ route('resepsionis.dashboard') }}">Data Master</a>
-    <a href="{{ route('login') }}">Logout</a>
-  </div>
-</div>
+    <main class="container">
+        <section class="hero">
+            <div class="center-row">
+                <h1>Welcome</h1>
+                <p class="lead">Anda sekarang berada di dashboard Resepsionis.</p>
+            </div>
+        </section>
 
-<div class="container">
-  <div class="card shadow radius">
-    <div class="card-header">Dashboard Resepsionis</div>
-    <div class="card-body">
-      <p>Daftar hewan yang terdaftar:</p>
-      <table class="data-table">
-        <thead>
-          <tr><th>Nama Hewan</th><th>Ras</th><th>Kategori</th><th>Pemilik</th></tr>
-        </thead>
-        <tbody>
-          @foreach($pet as $p)
-          <tr>
-            <td>{{ $p->nama_hewan }}</td>
-            <td>{{ $p->ras->nama_ras ?? '-' }}</td>
-            <td>{{ $p->kategori->nama_kategori ?? '-' }}</td>
-            <td>{{ $p->user->nama ?? '-' }}</td>
-          </tr>
-          @endforeach
-        </tbody>
-      </table>
-    </div>
-  </div>
-</div>
+        <!-- Grid Menu -->
+        <section class="services-grid" aria-label="Menu Dokter - Grid">
+            <article class="service-card" aria-labelledby="m-rekammedis">
+                <h4 id="m-pemilik">Data Pemilik</h4>
+                <p class="short">Nama, alamat, dan nomor kontak pemilik hewan.</p>
+                <small class="muted"><a href="resepsionis/pemilik">Lihat Data</a></small>
+            </article>
 
+            <article class="service-card" aria-labelledby="m-rekammedis">
+                <h4 id="m-pet">Data Hewan</h4>
+                <p class="short">Informasi ras, jenis, dan pemilik hewan.</p>
+                <small class="muted"><a href="resepsionis/pets">Lihat Data</a></small>
+            </article>
+
+            <article class="service-card" aria-labelledby="m-rekammedis">
+                <h4 id="m-temu-dokter">Temu Dokter</h4>
+                <p class="short">Data registrasi dan jadwal temu dokter.</p>
+                <small class="muted"><a href="resepsionis/temu-dokter">Lihat Data</a></small>
+            </article>
+        </section>
+    </main>
 </body>
 </html>

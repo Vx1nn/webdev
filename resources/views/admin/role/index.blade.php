@@ -1,49 +1,153 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard Admin</title>
-  <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
-</head>
-<body>
-<div class="navbar">
-  <a href="{{ route('admin.dashboard') }}" class="navbar-brand">
-    <img src="{{ asset('assets/img/unair-logo.png') }}" alt="UNAIR Logo">
-    RSHP UNAIR
-  </a>
-  <div class="navbar-links">
-    <a href="{{ route('admin.dashboard') }}">Data Master</a>
-    <a href="{{ route('login') }}">Logout</a>
-  </div>
-</div>
+@extends('layouts.lte.main')
 
-<div class="container">
-  <div class="card shadow radius">
-    <div class="card-header">
-      Daftar Role Pengguna
-      <a href="{{ route('admin.role.create') }}" class="btn-login" style="float:right;">+ Tambah Role</a>
-    </div>
-    <div class="card-body">
-      @if (session('success'))
-        <div class="alert success">{{ session('success') }}</div>
-      @endif
+@section('content')
 
-      <table class="data-table">
-        <thead>
-          <tr><th>No</th><th>Nama Role</th></tr>
-        </thead>
-        <tbody>
-          @foreach($data as $i => $row)
-          <tr>
-            <td>{{ $i + 1 }}</td>
-            <td>{{ ucfirst($row->nama_role) }}</td>
-          </tr>
-          @endforeach
-        </tbody>
-      </table>
+  <div class="app-content-header">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-sm-6">
+          <h3 class="mb-0">Role</h3>
+        </div>
+        <div class="col-sm-6">
+          <ol class="breadcrumb float-sm-end">
+            <li class="breadcrumb-item"><a href="#">Data Master</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Role</li>
+          </ol>
+        </div>
+      </div>
     </div>
   </div>
-</div>
-</body>
-</html>
+
+  <div class="app-content">
+    <div class="container-fluid">
+
+      <div class="card mb-4">
+        <div class="card-header">
+          <div class="d-flex w-100 justify-content-between align-items-center">
+            <h3 class="card-title mb-0">Daftar Role</h3>
+
+            <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modalTambahRole">
+              <i class="bi bi-plus-lg"></i> Tambah Role
+            </button>
+          </div>
+        </div>
+
+        <div class="card-body p-0">
+          <div class="table-responsive">
+            <table class="table table-hover table-striped mb-0">
+              <thead class="table-light">
+                <tr>
+                  <th style="width: 60px">#</th>
+                  <th>Nama Role</th>
+                  <th style="width: 140px">Aksi</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                @foreach($data as $role)
+                  <tr class="align-middle">
+                    <td>{{ $loop->iteration }}</td>
+                    <td>{{ $role->nama_role }}</td>
+                    <td>
+                      <button class="btn btn-sm btn-warning" data-bs-toggle="modal"
+                        data-bs-target="#modalEditRole{{ $role->idrole }}">
+                        Edit
+                      </button>
+
+                      <button class="btn btn-sm btn-danger" data-bs-toggle="modal"
+                        data-bs-target="#modalHapusRole{{ $role->idrole }}">
+                        Hapus
+                      </button>
+                    </td>
+                  </tr>
+
+                  <div class="modal fade" id="modalEditRole{{ $role->idrole }}" tabindex="-1">
+                    <div class="modal-dialog modal-dialog-centered">
+                      <div class="modal-content">
+                        <form method="post" action="{{ route('admin.role.edit', $role->idrole) }}">
+                          @csrf
+
+                          <div class="modal-header">
+                            <h5 class="modal-title">Edit Role</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                          </div>
+
+                          <div class="modal-body">
+                            <label class="form-label">Nama Role</label>
+                            <input name="nama_role" class="form-control" value="{{ $role->nama_role }}">
+                          </div>
+
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                            <button type="submit" class="btn btn-warning">Update</button>
+                          </div>
+
+                        </form>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="modal fade" id="modalHapusRole{{ $role->idrole }}" tabindex="-1">
+                    <div class="modal-dialog modal-dialog-centered">
+                      <div class="modal-content">
+                        <form method="post" action="{{ route('admin.role.delete', $role->idrole) }}">
+                          @csrf
+
+                          <div class="modal-header">
+                            <h5 class="modal-title">Hapus Role</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                          </div>
+
+                          <div class="modal-body">
+                            <p>Yakin ingin menghapus role <strong>{{ $role->nama_role }}</strong>?</p>
+                          </div>
+
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                            <button type="submit" class="btn btn-danger">Hapus</button>
+                          </div>
+
+                        </form>
+                      </div>
+                    </div>
+                  </div>
+
+                @endforeach
+              </tbody>
+
+            </table>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
+  <div class="modal fade" id="modalTambahRole" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <form method="post" action="{{ route('admin.role.store') }}">
+          @csrf
+
+          <div class="modal-header">
+            <h5 class="modal-title">Tambah Role</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+
+          <div class="modal-body">
+            <label class="form-label">Nama Role</label>
+            <input name="nama_role" class="form-control">
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+            <button type="submit" class="btn btn-primary">Simpan</button>
+          </div>
+
+        </form>
+      </div>
+    </div>
+  </div>
+
+@endsection

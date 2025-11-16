@@ -4,63 +4,71 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use App\Models\KodeTindakanTerapi;
-use App\Models\Kategori;
 use App\Models\KategoriKlinis;
 
 class KodeTindakanTerapiController extends Controller
 {
     public function index()
     {
-        $tindakan = DB::table('kode_tindakan_terapi')
-            ->join('kategori', 'kode_tindakan_terapi.idkategori', '=', 'kategori.idkategori')
-            ->join('kategori_klinis', 'kode_tindakan_terapi.idkategori_klinis', '=', 'kategori_klinis.idkategori_klinis')
-            ->select(
-                'kode_tindakan_terapi.*',
-                'kategori.nama_kategori',
-                'kategori_klinis.nama_kategori_klinis'
-            )
-            ->orderBy('idkode_tindakan_terapi')
-            ->get();
-
-        $kategori = Kategori::all();
-        $kategori_klinis = KategoriKlinis::all();
-
-        return view('admin.tindakan.index', compact('tindakan', 'kategori', 'kategori_klinis'));
+        $data = KodeTindakanTerapi::with('kategoriKlinis')->get();
+        $kategori = KategoriKlinis::all();
+        return view('admin.kode-tindakan.index', compact('data', 'kategori'));
     }
 
-    public function store(Request $request)
+    public function create()
     {
-        $request->validate([
-            'kode' => 'required|string|max:5|unique:kode_tindakan_terapi,kode',
-            'deskripsi_tindakan_terapi' => 'required|string',
-            'idkategori' => 'required|integer',
-            'idkategori_klinis' => 'required|integer'
+        return view('admin.kode-tindakan.create');
+    }
+
+    public function store(Request $r)
+    {
+        $this->validateKodeTindakan($r);
+        $this->createKodeTindakan($r);
+        return back();
+    }
+
+    private function validateKodeTindakan(Request $r, $ignoreId = null)
+    {
+        $unique = 'unique:kode_tindakan_terapi,kode';
+        if ($ignoreId)
+            $unique .= ',' . $ignoreId . ',idkode_tindakan_terapi';
+        $r->validate([
+            'kode' => 'required|string|max:20|' . $unique,
+            'deskripsi_tindakan_terapi' => 'required|string|max:255',
+            'idkategori_klinis' => 'required|exists:kategori_klinis,idkategori_klinis'
         ]);
-
-        KodeTindakanTerapi::create($request->only('kode', 'deskripsi_tindakan_terapi', 'idkategori', 'idkategori_klinis'));
-        return back()->with('success', 'Tindakan terapi ditambahkan.');
     }
 
-    public function update(Request $request, $id)
+    protected function createKodeTindakan(Request $r)
     {
-        $request->validate([
-            'kode' => "required|string|max:5|unique:kode_tindakan_terapi,kode,$id,idkode_tindakan_terapi",
-            'deskripsi_tindakan_terapi' => 'required|string',
-            'idkategori' => 'required|integer',
-            'idkategori_klinis' => 'required|integer'
+        KodeTindakanTerapi::create([
+            'kode' => strtoupper($r->kode),
+            'deskripsi_tindakan_terapi' => $this->formatNamaTindakan($r->deskripsi_tindakan_terapi),
+            'idkategori_klinis' => $r->idkategori_klinis
         ]);
-
-        KodeTindakanTerapi::where('idkode_tindakan_terapi', $id)
-            ->update($request->only('kode', 'deskripsi_tindakan_terapi', 'idkategori', 'idkategori_klinis'));
-
-        return back()->with('success', 'Tindakan terapi diperbarui.');
     }
 
-    public function destroy($id)
+    protected function formatNamaTindakan($nama)
     {
-        KodeTindakanTerapi::destroy($id);
-        return back()->with('success', 'Tindakan terapi dihapus.');
+        return ucwords(strtolower($nama));
     }
+
+    public function edit(KodeTindakanTerapi $kode, Request $r)
+    {
+        $this->validateKodeTindakan($r, $kode->idkode_tindakan_terapi);
+        $kode->update([
+            'kode' => strtoupper($r->kode),
+            'deskripsi_tindakan_terapi' => $this->formatNamaTindakan($r->deskripsi_tindakan_terapi),
+            'idkategori_klinis' => $r->idkategori_klinis
+        ]);
+        return back();
+    }
+
+    public function delete(KodeTindakanTerapi $kode)
+    {
+        $kode->delete();
+        return back();
+    }
+
 }

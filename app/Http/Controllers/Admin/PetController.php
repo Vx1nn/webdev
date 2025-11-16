@@ -4,61 +4,71 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use App\Models\Pet;
-use App\Models\Pemilik;
 use App\Models\RasHewan;
 
 class PetController extends Controller
 {
     public function index()
     {
-        $pets = DB::table('pet')
-            ->join('pemilik', 'pet.idpemilik', '=', 'pemilik.idpemilik')
-            ->join('ras_hewan', 'pet.idras_hewan', '=', 'ras_hewan.idras_hewan')
-            ->select('pet.*', 'pemilik.no_wa', 'ras_hewan.nama_ras')
-            ->orderBy('idpet')
-            ->get();
-
-        $pemilik = Pemilik::all();
-        $ras = RasHewan::all();
-
-        return view('admin.pet.index', compact('pets', 'pemilik', 'ras'));
+        $data = Pet::with(['rasHewan.jenisHewan', 'pemilik'])->get();
+        $ras = RasHewan::with('jenisHewan')->get();
+        $pemilik = \App\Models\Pemilik::with('user')->get();
+        return view('admin.pet.index', compact('data', 'ras', 'pemilik'));
     }
 
-    public function store(Request $request)
+    public function create()
     {
-        $request->validate([
+        return view('admin.pet.create');
+    }
+
+    public function store(Request $r)
+    {
+        $this->validatePet($r);
+        $this->createPet($r);
+        return back();
+    }
+
+    private function validatePet(Request $r)
+    {
+        $r->validate([
             'nama' => 'required|string|max:100',
-            'tanggal_lahir' => 'nullable|date',
-            'warna_tanda' => 'nullable|string|max:45',
-            'jenis_kelamin' => 'nullable|string|max:1',
-            'idpemilik' => 'required|integer',
-            'idras_hewan' => 'required|integer'
+            'jenis_kelamin' => 'required|in:J,B',
+            'idras_hewan' => 'required|exists:ras_hewan,idras_hewan',
+            'idpemilik' => 'required|exists:pemilik,idpemilik'
         ]);
-
-        Pet::create($request->only(['nama', 'tanggal_lahir', 'warna_tanda', 'jenis_kelamin', 'idpemilik', 'idras_hewan']));
-        return back()->with('success', 'Pet ditambahkan.');
     }
 
-    public function update(Request $request, $id)
+    protected function createPet(Request $r)
     {
-        $request->validate([
-            'nama' => 'required|string|max:100',
-            'tanggal_lahir' => 'nullable|date',
-            'warna_tanda' => 'nullable|string|max:45',
-            'jenis_kelamin' => 'nullable|string|max:1',
-            'idpemilik' => 'required|integer',
-            'idras_hewan' => 'required|integer'
+        Pet::create([
+            'nama' => $this->formatNamaPet($r->nama),
+            'jenis_kelamin' => $r->jenis_kelamin,
+            'idras_hewan' => $r->idras_hewan,
+            'idpemilik' => $r->idpemilik
         ]);
-
-        Pet::where('idpet', $id)->update($request->only(['nama', 'tanggal_lahir', 'warna_tanda', 'jenis_kelamin', 'idpemilik', 'idras_hewan']));
-        return back()->with('success', 'Pet diperbarui.');
     }
 
-    public function destroy($id)
+    protected function formatNamaPet($nama)
     {
-        Pet::destroy($id);
-        return back()->with('success', 'Pet dihapus.');
+        return ucwords(strtolower($nama));
+    }
+
+    public function edit(Pet $pet, Request $r)
+    {
+        $this->validatePet($r);
+        $pet->update([
+            'nama' => $this->formatNamaPet($r->nama),
+            'tanggal_lahir' => $r->tanggal_lahir,
+            'jenis_kelamin' => $r->jenis_kelamin,
+            'idras_hewan' => $r->idras_hewan
+        ]);
+        return back();
+    }
+
+    public function delete(Pet $pet)
+    {
+        $pet->delete();
+        return back();
     }
 }

@@ -1,0 +1,239 @@
+/* =========================================================
+   GLOBAL & UTILITY
+   ========================================================= */
+.center-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.lead {
+  font-weight: 500;
+  color: var(--pico-primary-hover);
+}
+
+.muted {
+  color: var(--pico-muted-color);
+}
+
+/* =========================================================
+   LAYOUT & NAVIGATION
+   ========================================================= */
+.navbar-inner .container {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+/* Dropdown (umum untuk navbar role/site) */
+details.dropdown summary {
+  background: none;
+  border: none;
+  padding: 0;
+  color: var(--pico-primary);
+  cursor: pointer;
+}
+
+details.dropdown summary::marker {
+  content: none;
+}
+
+details.dropdown ul {
+  list-style: none;
+  background: #fffdf5;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+  border-radius: 8px;
+  margin-top: 0.5rem;
+  padding: 0.5rem 0;
+}
+
+details.dropdown ul li a {
+  font-size: 0.9rem;
+  padding: 0.4rem 0.8rem;
+  display: block;
+  color: var(--pico-primary);
+}
+
+details.dropdown ul li a:hover {
+  background: rgba(255, 240, 160, 0.2);
+}
+
+/* =========================================================
+   HOME / HERO SECTION
+   ========================================================= */
+.hero {
+  background: linear-gradient(90deg, #fff7c0 0%, #fff0a0 50%, #ffe680 100%);
+  padding: 2.25rem;
+  margin: 1.25rem 0;
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.04);
+  text-align: center;
+}
+
+.site-intro {
+  margin: 0.75rem auto 2.25rem;
+  color: var(--pico-color);
+  line-height: 1.5;
+}
+
+/* =========================================================
+   KOMPONEN / CARDS
+   ========================================================= */
+.services-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.service-card,
+.team-card,
+.contact-card {
+  padding: 1rem;
+  border-radius: 10px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.04);
+  background: linear-gradient(180deg, rgba(255, 253, 245, 1), rgba(255, 250, 240, 1));
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  min-height: 110px;
+}
+
+.service-card h4,
+.team-card h4 {
+  margin: 0.25rem 0;
+  font-size: 1.05rem;
+}
+
+.service-card p.short {
+  margin: 0;
+  color: var(--pico-muted-color);
+  font-size: 0.96rem;
+}
+
+.service-badge {
+  display: inline-block;
+  padding: 0.15rem 0.5rem;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  background: rgba(117, 107, 0, 0.12);
+  color: var(--pico-primary);
+  align-self: flex-start;
+}
+
+/* --- Team / Struktur Organisasi --- */
+.team-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  margin-top: 1rem;
+}
+
+.team-card img {
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 999px;
+  display: block;
+  margin: 0.25rem auto 0.75rem;
+  border: 4px solid rgba(255, 255, 255, 0.6);
+}
+
+.team-card p.role {
+  margin: 0;
+  color: var(--pico-muted-color);
+  font-size: 0.95rem;
+}
+
+/* =========================================================
+   TABEL & DATA VIEW
+   ========================================================= */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.03);
+}
+
+th,
+td {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+th {
+  background-color: #fff8d9;
+  font-weight: 600;
+  text-align: left;
+}
+
+tr:hover {
+  background-color: rgba(255, 250, 200, 0.3);
+}
+
+/* =========================================================
+   FORM & LOGIN
+   ========================================================= */
+.login-page {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.login-card {
+  width: 100%;
+  max-width: 420px;
+  background: linear-gradient(180deg, #fffdf5, #fffaf0);
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+}
+
+.login-card h2 {
+  text-align: center;
+  margin-bottom: 1rem;
+  color: var(--pico-primary);
+}
+
+.form-foot {
+  text-align: center;
+  margin-top: 1rem;
+  font-size: 0.9rem;
+}
+
+/* =========================================================
+   KONTAK & MAP
+   ========================================================= */
+.map-wrapper {
+  width: 100%;
+  height: 360px;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+}
+
+.map-wrapper iframe {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  display: block;
+}
+
+@media (min-width: 900px) {
+  .map-wrapper {
+    height: 420px;
+  }
+}
+
+/* =========================================================
+   RESPONSIVENESS
+   ========================================================= */
+@media (min-width: 900px) {
+  .span-2 {
+    grid-column: span 2;
+  }
+}

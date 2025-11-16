@@ -2,10 +2,10 @@
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\HomeController;
-use App\Http\Controllers\StrukturController;
-use App\Http\Controllers\VisiController;
-use App\Http\Controllers\LayananController;
+use App\Http\Controllers\Site\HomeController;
+use App\Http\Controllers\Site\StrukturController;
+use App\Http\Controllers\Site\VisiController;
+use App\Http\Controllers\Site\LayananController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Admin\{
     DashboardController,
@@ -18,11 +18,14 @@ use App\Http\Controllers\Admin\{
     RoleController,
     UserController
 };
-use App\Http\Controllers\Dokter\DashboardController as DokterDashboard;
-use App\Http\Controllers\Perawat\DashboardController as PerawatDashboard;
-use App\Http\Controllers\Resepsionis\DashboardController as ResepsionisDashboard;
-use App\Http\Controllers\Pemilik\DashboardController as PemilikDashboard;
+use App\Http\Controllers\Dokter\DokterController;
+use App\Http\Controllers\Pemilik\PemilikController;
+use App\Http\Controllers\Perawat\PerawatController;
+use App\Http\Controllers\Resepsionis\ResepsionisController;
 
+Route::get('/', function () {
+    return view('site.home');
+});
 // Home page RSHP
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
@@ -85,20 +88,30 @@ Route::middleware('isAdmin')->prefix('admin')->name('admin.')->group(function ()
     Route::post('/kode-tindakan/delete/{kode}', [KodeTindakanTerapiController::class, 'delete'])->name('kode-tindakan.delete');
 });
 
-
-Route::middleware(['isDokter'])->group(function() {
-    Route::get('/dokter/dashboard', [DokterDashboard::class, 'index'])->name('dokter.dashboard');
+Route::middleware('isDokter')->prefix('dokter')->name('dokter.')->group(function () {
+    Route::get('/dashboard', fn() => view('dokter.dashboard'))->name('dashboard');
+    Route::get('/rekam-medis', [DokterController::class, 'index'])->name('rekam-medis');
+    Route::get('/rekam-medis/{id}', [DokterController::class, 'show'])->name('rekam-medis');
 });
 
-Route::middleware(['isPerawat'])->group(function() {
-    Route::get('/perawat/dashboard', [PerawatDashboard::class, 'index'])->name('perawat.dashboard');
+Route::prefix('perawat')->middleware(['isPerawat'])->group(function () {
+    Route::get('/dashboard', fn() => view('perawat.dashboard'))->name('perawat.dashboard');
+    Route::get('/rekam-medis/', [PerawatController::class, 'index'])->name('perawat.rekam-medis');
+    Route::get('/rekam-medis/{id}', [PerawatController::class, 'show'])->name('perawat.rekam-medis');
 });
 
-Route::middleware(['isResepsionis'])->group(function() {
-    Route::get('/resepsionis/dashboard', [ResepsionisDashboard::class, 'index'])->name('resepsionis.dashboard');
+Route::prefix('resepsionis')->middleware('isResepsionis')->group(function () {
+    Route::get('/dashboard', fn() => redirect()->route('resepsionis.pemilik'))->name('resepsionis.dashboard');
+    Route::get('/pemilik', [ResepsionisController::class, 'pemilik'])->name('resepsionis.pemilik');
+    Route::get('/pets', [ResepsionisController::class, 'pets'])->name('resepsionis.pets');
+    Route::get('/temu-dokter', [ResepsionisController::class, 'temudokter'])->name('resepsionis.temu-dokter');
 });
 
-Route::middleware(['isPemilik'])->group(function() {
-    Route::get('/pemilik/dashboard', [PemilikDashboard::class, 'index'])->name('pemilik.dashboard');
+Route::prefix('pemilik')->middleware('isPemilik')->group(function () {
+    Route::get('/dashboard', fn() => view('pemilik.dashboard'))->name('pemilik.dashboard');
+    Route::get('/rekam-medis', [PemilikController::class, 'rekam'])->name('pemilik.rekam-medis');
+    Route::get('/rekam-medis/{id}', [PemilikController::class, 'show'])->name('pemilik.rekam-medis');
+    Route::get('/pets', [PemilikController::class, 'pets'])->name('pemilik.pets');
+    Route::get('/reservasi', [PemilikController::class, 'reservasi'])->name('pemilik.reservasi');
 });
 

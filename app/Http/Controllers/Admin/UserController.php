@@ -4,81 +4,88 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use App\Models\User;
 use App\Models\Role;
+use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
-    public function index()
-    {
-        $users = DB::table('user')
-            ->leftJoin('role_user', 'user.iduser', '=', 'role_user.iduser')
-            ->leftJoin('role', 'role_user.idrole', '=', 'role.idrole')
-            ->select('user.*', 'role.nama_role')
-            ->orderBy('user.iduser', 'asc')
-            ->get();
+  public function index()
+  {
+    $data = User::with([
+      'roles' => function ($q) {
+        $q->select('role.idrole', 'role.nama_role', 'role_user.iduser', 'role_user.status');
+      }
+    ])->get();
+    $roles = Role::all();
+    return view('admin.user.index', compact('data', 'roles'));
+  }
 
-        $roles = Role::all();
+  public function create()
+  {
+    $roles = Role::all();
+    return view('admin.user.create', compact('roles'));
+  }
 
-        return view('admin.user.index', compact('users', 'roles'));
+  public function store(Request $r)
+  {
+    $this->validateUser($r);
+    $this->createUser($r);
+    return back();
+  }
+
+  private function validateUser($r, $id = null)
+  {
+    $r->validate([
+      'nama' => 'required|string|max:100',
+      'email' => 'required|email|unique:user,email,' . $id . ',iduser',
+      'idrole' => 'nullable|exists:role,idrole'
+    ]);
+  }
+
+  protected function createUser(Request $r)
+  {
+    $user = User::create([
+      'nama' => $this->formatNamaUser($r->nama),
+      'email' => $r->email,
+      'password' => Hash::make($r->password)
+    ]);
+    $user->roleUser()->create(['idrole' => $r->idrole]);
+  }
+
+  protected function formatNamaUser($nama)
+  {
+    return ucwords(strtolower($nama));
+  }
+
+  public function edit(User $user, Request $r)
+  {
+    $this->validateUser($r, $user->iduser);
+    $user->update([
+      'nama' => $this->formatNamaUser($r->nama),
+      'email' => $r->email,
+      'aktif' => $r->aktif
+    ]);
+    if ($r->idrole) {
+      $user->roles()->sync($r->idrole);
     }
+    return back();
+  }
 
-    public function store(Request $request)
-    {
-        $validated = $request->validate([
-            'nama' => 'required|string|max:255',
-            'email' => 'required|email|unique:user,email',
-            'password' => 'required|min:6',
-            'idrole' => 'required|integer'
-        ]);
-
-        DB::transaction(function () use ($validated) {
-            $user = User::create([
-                'nama' => $validated['nama'],
-                'email' => $validated['email'],
-                'password' => bcrypt($validated['password']),
-            ]);
-
-            DB::table('role_user')->insert([
-                'iduser' => $user->iduser,
-                'idrole' => $validated['idrole'],
-                'status' => 1,
-            ]);
-        });
-
-        return back()->with('success', 'User baru berhasil dibuat.');
+  public function toggleRole($iduser, $idrole)
+  {
+    $user = User::findOrFail($iduser);
+    $role = $user->roles()->where('role.idrole', $idrole)->first();
+    if ($role) {
+      $new = $role->pivot->status ? 0 : 1;
+      $user->roles()->updateExistingPivot($idrole, ['status' => $new]);
     }
+    return back();
+  }
 
-    public function update(Request $request, $id)
-    {
-        $validated = $request->validate([
-            'nama' => 'required|string|max:255',
-            'email' => "required|email|unique:user,email,$id,iduser",
-            'idrole' => 'required|integer'
-        ]);
-
-        DB::transaction(function () use ($validated, $id) {
-            User::where('iduser', $id)->update([
-                'nama' => $validated['nama'],
-                'email' => $validated['email'],
-            ]);
-
-            DB::table('role_user')
-                ->where('iduser', $id)
-                ->update(['idrole' => $validated['idrole']]);
-        });
-
-        return back()->with('success', 'User berhasil diperbarui.');
-    }
-
-    public function destroy($id)
-    {
-        DB::transaction(function () use ($id) {
-            DB::table('role_user')->where('iduser', $id)->delete();
-            User::destroy($id);
-        });
-
-        return back()->with('success', 'User berhasil dihapus.');
-    }
+  public function delete(User $user)
+  {
+    $user->delete();
+    return back();
+  }
 }
