@@ -13,12 +13,10 @@ class LoginController extends Controller
 {
     use AuthenticatesUsers;
 
-    /**
-     * Override: redirect path after successful login
-     */
+
     protected function authenticated(Request $request, $user)
     {
-        // Ambil role dari tabel role_user + role
+
         $role = DB::table('role_user')
             ->join('role', 'role_user.idrole', '=', 'role.idrole')
             ->where('role_user.iduser', $user->iduser)
@@ -55,10 +53,7 @@ class LoginController extends Controller
      * Path default (fallback) jika tidak ada role.
      */
     protected $redirectTo = '/home';
-
-    /**
-     * Create a new controller instance.
-     */
+    
     public function __construct()
     {
         $this->middleware('guest')->except('logout');

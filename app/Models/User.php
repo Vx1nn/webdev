@@ -48,4 +48,22 @@ class User extends Authenticatable
     {
         return $this->roles->contains('nama_role', $roleName);
     }
+
+    	public function hasActiveRole(string $roleName): bool
+	{
+		return $this->roles()
+			->whereRaw('LOWER(role.nama_role) = ?', [strtolower($roleName)])
+			->wherePivot('status', 1)
+			->exists();
+	}
+
+	public function getActiveRoles()
+	{
+		return $this->roles()
+			->wherePivot('status', 1)
+			->get()
+			->pluck('nama_role')
+			->map(fn($role) => strtolower($role))
+			->toArray();
+	}
 }

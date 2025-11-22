@@ -2,73 +2,88 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Models\Pet;
 use App\Models\RasHewan;
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
 
 class PetController extends Controller
 {
-    public function index()
-    {
-        $data = Pet::with(['rasHewan.jenisHewan', 'pemilik'])->get();
-        $ras = RasHewan::with('jenisHewan')->get();
-        $pemilik = \App\Models\Pemilik::with('user')->get();
-        return view('admin.pet.index', compact('data', 'ras', 'pemilik'));
-    }
+	public function index()
+	{
+		$search = request('search');
+		$data = Pet::with(['rasHewan.jenisHewan', 'pemilik.user'])
+			->when($search, function ($query) use ($search) {
+				$query->where('nama', 'like', '%' . $search . '%')
+					->orWhereHas('pemilik.user', function ($q) use ($search) {
+						$q->where('nama', 'like', '%' . $search . '%');
+					})
+					->orWhereHas('rasHewan', function ($q) use ($search) {
+						$q->where('nama_ras', 'like', '%' . $search . '%');
+					});
+			})
+			->paginate(15);
+		$ras = RasHewan::with('jenisHewan')->get();
+		$pemilik = \App\Models\Pemilik::with('user')->get();
 
-    public function create()
-    {
-        return view('admin.pet.create');
-    }
+		return view('admin.pet.index', compact('data', 'ras', 'pemilik'));
+	}
 
-    public function store(Request $r)
-    {
-        $this->validatePet($r);
-        $this->createPet($r);
-        return back();
-    }
+	public function create()
+	{
+		return view('admin.pet.create');
+	}
 
-    private function validatePet(Request $r)
-    {
-        $r->validate([
-            'nama' => 'required|string|max:100',
-            'jenis_kelamin' => 'required|in:J,B',
-            'idras_hewan' => 'required|exists:ras_hewan,idras_hewan',
-            'idpemilik' => 'required|exists:pemilik,idpemilik'
-        ]);
-    }
+	public function store(Request $r)
+	{
+		$this->validatePet($r);
+		$this->createPet($r);
 
-    protected function createPet(Request $r)
-    {
-        Pet::create([
-            'nama' => $this->formatNamaPet($r->nama),
-            'jenis_kelamin' => $r->jenis_kelamin,
-            'idras_hewan' => $r->idras_hewan,
-            'idpemilik' => $r->idpemilik
-        ]);
-    }
+		return back();
+	}
 
-    protected function formatNamaPet($nama)
-    {
-        return ucwords(strtolower($nama));
-    }
+	private function validatePet(Request $r)
+	{
+		$r->validate([
+			'nama' => 'required|string|max:100',
+			'jenis_kelamin' => 'required|in:J,B',
+			'idras_hewan' => 'required|exists:ras_hewan,idras_hewan',
+			'idpemilik' => 'required|exists:pemilik,idpemilik',
+		]);
+	}
 
-    public function edit(Pet $pet, Request $r)
-    {
-        $this->validatePet($r);
-        $pet->update([
-            'nama' => $this->formatNamaPet($r->nama),
-            'tanggal_lahir' => $r->tanggal_lahir,
-            'jenis_kelamin' => $r->jenis_kelamin,
-            'idras_hewan' => $r->idras_hewan
-        ]);
-        return back();
-    }
+	protected function createPet(Request $r)
+	{
+		Pet::create([
+			'nama' => $this->formatNamaPet($r->nama),
+			'jenis_kelamin' => $r->jenis_kelamin,
+			'idras_hewan' => $r->idras_hewan,
+			'idpemilik' => $r->idpemilik,
+		]);
+	}
 
-    public function delete(Pet $pet)
-    {
-        $pet->delete();
-        return back();
-    }
+	protected function formatNamaPet($nama)
+	{
+		return ucwords(strtolower($nama));
+	}
+
+	public function edit(Pet $pet, Request $r)
+	{
+		$this->validatePet($r);
+		$pet->update([
+			'nama' => $this->formatNamaPet($r->nama),
+			'tanggal_lahir' => $r->tanggal_lahir,
+			'jenis_kelamin' => $r->jenis_kelamin,
+			'idras_hewan' => $r->idras_hewan,
+		]);
+
+		return back();
+	}
+
+	public function delete(Pet $pet)
+	{
+		$pet->delete();
+
+		return back();
+	}
 }

@@ -13,6 +13,7 @@ class KodeTindakanTerapiController extends Controller
     {
         $data = KodeTindakanTerapi::with('kategoriKlinis')->get();
         $kategori = KategoriKlinis::all();
+
         return view('admin.kode-tindakan.index', compact('data', 'kategori'));
     }
 
@@ -25,20 +26,20 @@ class KodeTindakanTerapiController extends Controller
     {
         $this->validateKodeTindakan($r);
         $this->createKodeTindakan($r);
+
         return back();
     }
 
-    private function validateKodeTindakan(Request $r, $ignoreId = null)
-    {
-        $unique = 'unique:kode_tindakan_terapi,kode';
-        if ($ignoreId)
-            $unique .= ',' . $ignoreId . ',idkode_tindakan_terapi';
-        $r->validate([
-            'kode' => 'required|string|max:20|' . $unique,
-            'deskripsi_tindakan_terapi' => 'required|string|max:255',
-            'idkategori_klinis' => 'required|exists:kategori_klinis,idkategori_klinis'
-        ]);
-    }
+	private function validateKodeTindakan(Request $r, $ignoreId = null)
+	{
+		$unique = 'unique:kode_tindakan_terapi,kode';
+		if ($ignoreId) {$unique .= ',' . $ignoreId . ',idkode_tindakan_terapi';}
+		$r->validate([
+			'kode' => 'required|string|max:20|' . $unique,
+			'deskripsi_tindakan_terapi' => 'required|string|max:255',
+			'idkategori_klinis' => 'required|exists:kategori_klinis,idkategori_klinis',
+		]);
+	}
 
     protected function createKodeTindakan(Request $r)
     {
@@ -62,12 +63,14 @@ class KodeTindakanTerapiController extends Controller
             'deskripsi_tindakan_terapi' => $this->formatNamaTindakan($r->deskripsi_tindakan_terapi),
             'idkategori_klinis' => $r->idkategori_klinis
         ]);
+
         return back();
     }
 
     public function delete(KodeTindakanTerapi $kode)
     {
         $kode->delete();
+        
         return back();
     }
 

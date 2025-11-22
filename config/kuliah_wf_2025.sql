@@ -431,6 +431,36 @@ VALUES (
     'admin@mail.com',
     '$2y$10$6fgJedH.24DiaHjbmspxZusZ/4.bNbQc18YGCNXKulAyJwLvsw8pO'
   );
+-- --------------------------------------------------------
+--
+-- Table structure for table `dokter`
+--
+
+CREATE TABLE IF NOT EXISTS `dokter` (
+  `id_dokter` int NOT NULL AUTO_INCREMENT,
+  `alamat` varchar(100) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `no_hp` varchar(45) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `bidang_dokter` varchar(100) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `jenis_kelamin` varchar(1) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `iduser` bigint NOT NULL,
+  PRIMARY KEY (`id_dokter`),
+  KEY `fk_dokter_user1_idx` (`iduser`)
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci;
+-- --------------------------------------------------------
+--
+-- Table structure for table `perawat`
+--
+
+CREATE TABLE IF NOT EXISTS `perawat` (
+  `id_perawat` int NOT NULL AUTO_INCREMENT,
+  `alamat` varchar(100) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `no_hp` varchar(45) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `jenis_kelamin` varchar(1) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `pendidikan` varchar(100) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `iduser` bigint NOT NULL,
+  PRIMARY KEY (`id_perawat`),
+  KEY `fk_perawat_user1_idx` (`iduser`)
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci;
 --
 -- Indexes for dumped tables
 --
@@ -664,6 +694,15 @@ ALTER TABLE `todo_list`
 ADD CONSTRAINT `fk_pegawai` FOREIGN KEY (`NIP`) REFERENCES `pegawai` (`NIP`),
   ADD CONSTRAINT `fk_proyek` FOREIGN KEY (`id_proyek`) REFERENCES `proyek` (`id_proyek`);
 COMMIT;
+-- Constraints for table `dokter`
+--
+ALTER TABLE `dokter`
+ADD CONSTRAINT `fk_dokter_user1` FOREIGN KEY (`iduser`) REFERENCES `user` (`iduser`);
+--
+-- Constraints for table `perawat`
+--
+ALTER TABLE `perawat`
+ADD CONSTRAINT `fk_perawat_user1` FOREIGN KEY (`iduser`) REFERENCES `user` (`iduser`);
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */
 ;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */

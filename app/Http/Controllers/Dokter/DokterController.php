@@ -1,57 +1,32 @@
 <?php
-namespace App\Http\Controllers\dokter;
+
+namespace App\Http\Controllers\Dokter;
+
+use App\Models\Dokter;
+use App\Models\Pet;
+use App\Models\RoleUser;
 use App\Http\Controllers\Controller;
-use App\Models\RekamMedis;
 
 class DokterController extends Controller
 {
-    public function index()
-    {
-        $rekam = RekamMedis::with(['pet.rasHewan.jenisHewan', 'pet.pemilik.user', 'dokter.user'])
-            ->orderByDesc('created_at')
-            ->get();
+	public function viewPasien()
+	{
+		$data = Pet::with(['pemilik.user', 'rasHewan.jenisHewan', 'rekamMedis'])
+			->get();
 
-        return view('dokter.rekam-medis', ['rekam' => $rekam]);
-    }
+		return view('dokter.pasien.index', compact('data'));
+	}
 
-    public function show($id)
-    {
-        $r = RekamMedis::with([
-            'pet.pemilik.user',
-            'dokter.user',
-            'detailRekamMedis.kodeTindakanTerapi.kategori',
-            'detailRekamMedis.kodeTindakanTerapi.kategoriKlinis'
-        ])->findOrFail($id);
+	public function profil()
+	{
+		$user = auth()->user();
+		$roleUser = RoleUser::with(['user', 'role'])
+			->where('iduser', $user->iduser)
+			->where('idrole', 2)
+			->first();
 
-        return response()->json([
-            'id' => $r->idrekam_medis,
-            'tanggal' => $r->created_at,
-            'pet' => [
-                'id' => $r->pet->idpet,
-                'nama' => $r->pet->nama,
-            ],
-            'pemilik' => [
-                'id' => $r->pet->pemilik->idpemilik ?? null,
-                'nama' => $r->pet->pemilik->user->nama ?? '-',
-                'no_wa' => $r->pet->pemilik->no_wa ?? '-',
-            ],
-            'dokter' => [
-                'id' => $r->dokter->idrole_user ?? null,
-                'nama' => $r->dokter->user->nama ?? '-'
-            ],
-            'anamnesa' => $r->anamnesa,
-            'temuan' => $r->temuan_klinis,
-            'diagnosa' => $r->diagnosa,
-            'detail' => $r->detailRekamMedis->map(function ($d) {
-                return [
-                    'id' => $d->iddetail_rekam_medis,
-                    'kode' => $d->kodeTindakanTerapi->kode ?? null,
-                    'deskripsi' => $d->kodeTindakanTerapi->deskripsi_tindakan_terapi ?? $d->detail,
-                    'kategori' => $d->kodeTindakanTerapi->kategori->nama_kategori ?? '-',
-                    'klinis' => $d->kodeTindakanTerapi->kategoriKlinis->nama_kategori_klinis ?? '-',
-                    'note' => $d->detail
-                ];
-            })
-        ]);
-    }
+		$dokter = Dokter::where('iduser', $user->iduser)->first();
+
+		return view('dokter.profil', compact('user', 'roleUser', 'dokter'));
+	}
 }
