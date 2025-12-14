@@ -2,12 +2,14 @@
 
 namespace App\Models;
 
+use App\Traits\RecordsDeletion;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Pemilik extends Model
 {
-	use HasFactory;
+	use HasFactory, SoftDeletes, RecordsDeletion;
 
 	protected $table = 'pemilik';
 
@@ -17,7 +19,9 @@ class Pemilik extends Model
 
 	public $timestamps = false;
 
-	protected $fillable = ['idpemilik', 'no_wa', 'alamat', 'iduser'];
+	protected $fillable = ['idpemilik', 'no_wa', 'alamat', 'iduser', 'deleted_by'];
+
+	protected $dates = ['deleted_at'];
 
 	public function user()
 	{
@@ -27,5 +31,10 @@ class Pemilik extends Model
 	public function pets()
 	{
 		return $this->hasMany(Pet::class, 'idpemilik');
+	}
+
+	public function deletedBy()
+	{
+		return $this->belongsTo(User::class, 'deleted_by', 'iduser');
 	}
 }

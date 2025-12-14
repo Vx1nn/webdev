@@ -2,12 +2,14 @@
 
 namespace App\Models;
 
+use App\Traits\RecordsDeletion;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Perawat extends Model
 {
-	use HasFactory;
+	use HasFactory, SoftDeletes, RecordsDeletion;
 
 	protected $table = 'perawat';
 
@@ -21,7 +23,10 @@ class Perawat extends Model
 		'jenis_kelamin',
 		'pendidikan',
 		'iduser',
+		'deleted_by',
 	];
+
+	protected $dates = ['deleted_at'];
 
 	public function getJenisKelaminTextAttribute()
 	{
@@ -31,5 +36,10 @@ class Perawat extends Model
 	public function user()
 	{
 		return $this->belongsTo(User::class, 'iduser', 'iduser');
+	}
+
+	public function deletedBy()
+	{
+		return $this->belongsTo(User::class, 'deleted_by', 'iduser');
 	}
 }
